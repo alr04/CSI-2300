@@ -8,12 +8,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class App extends Application {
-  private TextField tfAnnualInterestRate = new TextField();
-  private TextField tfNumberOfYears = new TextField();
-  private TextField tfLoanAmount = new TextField();
-  private TextField tfMonthlyPayment = new TextField();
-  private TextField tfTotalPayment = new TextField();
+
+public class MetricConverter extends Application {
+  private TextField OriginalUnit = new TextField();
+  private TextField ConvertedUnit = new TextField();
+  private TextField OriginalAmnt = new TextField();
+  private TextField ConvertedAmnt = new TextField();
   private Button btCalculate = new Button("Calculate");
   
   @Override // Override the start method in the Application class
@@ -22,61 +22,50 @@ public class App extends Application {
     GridPane gridPane = new GridPane();
     gridPane.setHgap(5);
     gridPane.setVgap(5);
-    gridPane.add(new Label("Annual Interest Rate:"), 0, 0);
-    gridPane.add(tfAnnualInterestRate, 1, 0);
-    gridPane.add(new Label("Number of Years:"), 0, 1);
-    gridPane.add(tfNumberOfYears, 1, 1);
-    gridPane.add(new Label("Loan Amount:"), 0, 2);
-    gridPane.add(tfLoanAmount, 1, 2);
-    gridPane.add(new Label("Monthly Payment:"), 0, 3);
-    gridPane.add(tfMonthlyPayment, 1, 3);
-    gridPane.add(new Label("Total Payment:"), 0, 4);
-    gridPane.add(tfTotalPayment, 1, 4);
-    gridPane.add(btCalculate, 1, 5);
+    gridPane.add(new Label("Original Unit (Abbreviated Form) "), 0, 0);
+    gridPane.add(OriginalUnit, 1, 0);
+    gridPane.add(new Label("Original Amount"), 0, 1);
+    gridPane.add(OriginalAmnt, 1, 1);
+    gridPane.add(new Label("Converted Unit"), 0, 2);
+    gridPane.add(ConvertedUnit, 1, 2);
+    gridPane.add(new Label("Converted Amount"), 0, 3);
+    gridPane.add(ConvertedAmnt, 1, 3);
+    gridPane.add(btCalculate, 1, 4);
 
     // Set properties for UI
     gridPane.setAlignment(Pos.CENTER);
-    tfAnnualInterestRate.setAlignment(Pos.BOTTOM_RIGHT);
-    tfNumberOfYears.setAlignment(Pos.BOTTOM_RIGHT);
-    tfLoanAmount.setAlignment(Pos.BOTTOM_RIGHT);
-    tfMonthlyPayment.setAlignment(Pos.BOTTOM_RIGHT);
-    tfTotalPayment.setAlignment(Pos.BOTTOM_RIGHT);
-    tfMonthlyPayment.setEditable(false);
-    tfTotalPayment.setEditable(false);
+    OriginalAmnt.setAlignment(Pos.BOTTOM_RIGHT);
+    OriginalUnit.setAlignment(Pos.BOTTOM_RIGHT);
+    ConvertedUnit.setAlignment(Pos.BOTTOM_RIGHT);
+    ConvertedAmnt.setAlignment(Pos.BOTTOM_RIGHT);
+    ConvertedUnit.setEditable(false);
+    ConvertedAmnt.setEditable(false);
     GridPane.setHalignment(btCalculate, HPos.RIGHT);
 
     // Process events
-    btCalculate.setOnAction(e -> calculateLoanPayment());
+    btCalculate.setOnAction(e -> MetricConversion());
 
     // Create a scene and place it in the stage
     Scene scene = new Scene(gridPane, 400, 250);
-    primaryStage.setTitle("LoanCalculator"); // Set title
+    primaryStage.setTitle("MetricConverter"); // Set title
     primaryStage.setScene(scene); // Place the scene in the stage
     primaryStage.show(); // Display the stage
   }
   
-  private void calculateLoanPayment() {
+  private void MetricConversion() {
     // Get values from text fields
-    double interest =
-      Double.parseDouble(tfAnnualInterestRate.getText());
-    int year = Integer.parseInt(tfNumberOfYears.getText());
-    double loanAmount =
-      Double.parseDouble(tfLoanAmount.getText());
+    String Unit = OriginalUnit.getText().toLowerCase().strip();
+    double Amnt = Double.parseDouble(OriginalAmnt.getText());
 
-    // Create a loan object. Loan defined in Listing 10.2
-    Loan loan = new Loan(interest, year, loanAmount);
-
-    // Display monthly payment and total payment
-    tfMonthlyPayment.setText(String.format("$%.2f",
-      loan.getMonthlyPayment()));
-    tfTotalPayment.setText(String.format("$%.2f",
-      loan.getTotalPayment()));
+    // Create a Converter object
+    Converter converted = new Converter(Amnt, Unit);
+    
+    // Display Converted Unit and Converted Value
+    ConvertedUnit.setText(Converter.ConvertedOutput(converted).unit);
+    ConvertedAmnt.setText(String.valueOf(Converter.ConvertedOutput(converted).value));
+      
   }
   
-  /**
-   * The main method is only needed for the IDE with limited
-   * JavaFX support. Not needed for running from the command line.
-   */
   public static void main(String[] args) {
     launch(args);
   }
